@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --dark: #121212;
+            --darker: #1a1a1a;
+            --grey: #2d2d2d;
+            --light: #e0e0e0;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .auth-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .auth-card {
+            background-color: var(--darker);
+            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .auth-card-header {
+            background-color: var(--grey);
+            color: white;
+            padding: 1.25rem;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+        .auth-card-body {
+            padding: 1.5rem;
+        }
+        .donation-option {
+            background-color: var(--grey);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .donation-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        .donation-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .btn-donate {
+            background-color: var(--primary);
+            border: none;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .btn-donate:hover {
+            background-color: #0b5ed7;
+        }
+        .upi-btn {
+            background-color: #6c25be;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
+        .upi-btn:hover {
+            background-color: #5a1fa3;
+            color: white;
+        }
+        .payment-options {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--darker);
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Logo -->
+        <div class="text-center mb-4">
+            <a href="{% url 'index' %}" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-cloud-sun fs-3 me-2" style="color: #0d6efd;"></i>
+                <span class="fs-3 fw-bold text-white" style="font-family: 'Times New Roman', serif;">Weather App</span>
+            </a>
+        </div>
+
+        <!-- Donation Card -->
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h4 class="mb-0"><i class="bi bi-heart me-2"></i>Support Our Service</h4>
+            </div>
+            <div class="auth-card-body">
+                <p class="text-center mb-4">Help us keep this weather service running and ad-free. Your support makes a difference!</p>
+                
+                <!-- Donation Options -->
+                <div class="donation-option">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-cup-hot me-2"></i>Buy Us Chai</h5>
+                        <span class="donation-amount">₹20</span>
+                    </div>
+                    <p>Support our team with a small donation that keeps us energized.</p>
+                    <button class="btn btn-donate w-100" onclick="startPayment(20)">Donate ₹20</button>
+                </div>
+                
+                <div class="donation-option">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-server me-2"></i>Server Support</h5>
+                        <span class="donation-amount">₹50</span>
+                    </div>
+                    <p>Help cover our server costs and ensure reliable service.</p>
+                    <button class="btn btn-donate w-100" onclick="startPayment(50)">Donate ₹50</button>
+                </div>
+                
+                <div class="donation-option">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-stars me-2"></i>Sustainer</h5>
+                        <span class="donation-amount">₹100+</span>
+                    </div>
+                    <p>Become a sustaining supporter with a larger contribution.</p>
+                    <div class="input-group mt-2">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" id="customAmount" class="form-control" placeholder="Custom amount" min="1">
+                        <button class="btn btn-donate" onclick="startCustomPayment()">Donate</button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">We accept:</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <i class="bi bi-credit-card fs-4" title="Credit/Debit Cards"></i>
+                        <i class="bi bi-bank fs-4 text-info" title="Net Banking"></i>
+                        <i class="bi bi-wallet fs-4 text-success" title="UPI"></i>
+                        <i class="bi bi-phone fs-4 text-warning" title="Wallets"></i>
+                    </div>
+                    <p class="text-muted small mt-3">Payments processed securely via Razorpay</p>
+                </div>
+
+                <!-- UPI Payment Option (Hidden by default) -->
+                <div class="text-center mt-3">
+                    <button class="btn upi-btn" onclick="toggleUpiOptions()">
+                        <i class="bi bi-wallet2"></i> Pay via UPI
+                    </button>
+                </div>
+
+                <div id="upiOptions" class="payment-options">
+                    <h6 class="text-center mb-3">Scan QR Code or Use UPI ID</h6>
+                    <div class="text-center mb-3">
+                        <!-- Replace with your actual UPI QR code -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=test@razorpay&pn=WeatherApp&cu=INR" 
+                             alt="UPI QR Code" class="img-fluid mb-2" style="max-width: 150px;">
+                        <p class="small mb-1">UPI ID: test@razorpay</p>
+                        <p class="small text-muted">(Test mode - no real payment)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Razorpay test credentials
+        const razorpayKey = 'rzp_test_1DP5mmOlF5G5ag'; // Test API key
+        
+        function startPayment(amount) {
+            const options = {
+                "key": razorpayKey,
+                "amount": amount * 100, // Razorpay expects amount in paise
+                "currency": "INR",
+                "name": "Weather App",
+                "description": "Donation",
+                "image": "https://example.com/your_logo.png",
+                "handler": function(response) {
+                    alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+                    // In a real app, you would verify the payment on your server
+                },
+                "prefill": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "contact": "9876543210"
+                },
+                "notes": {
+                    "address": "Test donation"
+                },
+                "theme": {
+                    "color": "#0d6efd"
+                }
+            };
+            
+            const rzp = new Razorpay(options);
+            rzp.open();
+        }
+
+        function startCustomPayment() {
+            const amountInput = document.getElementById('customAmount');
+            const amount = parseInt(amountInput.value);
+            
+            if (isNaN(amount) || amount < 1) {
+                alert("Please enter a valid amount (minimum ₹1)");
+                return;
+            }
+            
+            startPayment(amount);
+        }
+
+        function toggleUpiOptions() {
+            const upiOptions = document.getElementById('upiOptions');
+            if (upiOptions.style.display === 'block') {
+                upiOptions.style.display = 'none';
+            } else {
+                upiOptions.style.display = 'block';
+            }
+        }
+
+        // Close UPI options when clicking outside
+        document.addEventListener('click', function(event) {
+            const upiOptions = document.getElementById('upiOptions');
+            const upiBtn = document.querySelector('.upi-btn');
+            
+            if (upiOptions.style.display === 'block' && 
+                !upiOptions.contains(event.target) && 
+                event.target !== upiBtn) {
+                upiOptions.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
