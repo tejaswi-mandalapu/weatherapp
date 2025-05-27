@@ -15,7 +15,7 @@ class EmailOrPhoneBackend(BaseBackend):
             # Properly closed parentheses
             user = User.objects.get(
                 Q(email=identifier) | 
-                Q(phone_number=identifier)
+                Q(phone=identifier)
             )
             
             if user.check_password(password):

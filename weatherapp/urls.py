@@ -28,13 +28,14 @@ urlpatterns = [
     path('about/', weather_views.about, name='about'),
     path('contact/', weather_views.contact, name='contact'),
     path('donate/', weather_views.donate, name='donate'),
-    path('dashboard/', weather_views.userdashboard, name='dashboard'),
+    path('dashboard/', weather_views.userdashboard, name='userdashboard'),
+    
     
     
     
     # Accounts URLs (for other auth features)
     path('accounts/', include([
-        path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+        path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
         
         # Password Reset URLs
         path('password-reset/', auth_views.PasswordResetView.as_view(

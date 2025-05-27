@@ -137,7 +137,7 @@ def user_login(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, 'Login successful!')
-            return redirect('dashboard')
+            return redirect('userdashboard')
         else:
             messages.error(request, "Invalid credentials. Please try again.")
     else:
@@ -155,11 +155,38 @@ def donate(request):
 @login_required
 def userdashboard(request):
     """
-    User dashboard view (similar to index)
+    User dashboard view with weather search functionality
     """
-    # You can fetch personalized data here if needed
     weather_data = None
     news_articles = fetch_weather_news()
+    
+    if request.method == 'POST':
+        city_name = request.POST.get('city', '').strip()
+        if city_name:
+            try:
+                # Fetch weather data
+                weather_url = f"http://api.weatherapi.com/v1/current.json?key={settings.WEATHER_API_KEY}&q={city_name}"
+                response = requests.get(weather_url)
+                response.raise_for_status()
+                weather_json = response.json()
+                
+                weather_data = {
+                    'city': city_name,
+                    'temperature': weather_json['current']['temp_c'],
+                    'description': weather_json['current']['condition']['text'],
+                    'icon': weather_json['current']['condition']['icon'],
+                    'humidity': weather_json['current']['humidity'],
+                    'wind_speed': weather_json['current']['wind_kph'],
+                    'feels_like': weather_json['current']['feelslike_c']
+                }
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Weather API request failed: {e}")
+                messages.error(request, f"Could not fetch weather for {city_name}. Please try again.")
+            except (KeyError, ValueError) as e:
+                print(f"Error parsing weather data: {e}")
+                messages.error(request, "Invalid weather data received. Please try another city.")
+    
     return render(request, 'userdashboard.html', {
         'weather_data': weather_data,
         'news_articles': news_articles
