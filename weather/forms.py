@@ -101,6 +101,14 @@ class CustomUserCreationForm(UserCreationForm):
         user.phone = self.cleaned_data['phone_number']
         user.location = self.cleaned_data['location']
         user.dob = self.cleaned_data['dob']
+        # Generate a unique username from email or phone
+        base_username = self.cleaned_data['email'].split('@')[0]
+        username = base_username
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        user.username = username
         if commit:
             user.save()
         return user

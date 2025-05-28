@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
 class CustomUser(AbstractUser):
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True, unique=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
+    email = models.EmailField(unique=True)  # Add this line if not already present
 
     class Meta:
         verbose_name = 'Custom User'

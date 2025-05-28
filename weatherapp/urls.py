@@ -28,13 +28,16 @@ urlpatterns = [
     path('about/', weather_views.about, name='about'),
     path('contact/', weather_views.contact, name='contact'),
     path('donate/', weather_views.donate, name='donate'),
-    path('dashboard/', weather_views.userdashboard, name='dashboard'),
+    path('dashboard/', weather_views.userdashboard, name='userdashboard'),
+    path('api/weather-by-coords', weather_views.weather_by_coords, name='weather_by_coords'),
+    path('api/weather-by-city', weather_views.weather_by_city, name='weather_by_city'),
+    
     
     
     
     # Accounts URLs (for other auth features)
     path('accounts/', include([
-        path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+        path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
         
         # Password Reset URLs
         path('password-reset/', auth_views.PasswordResetView.as_view(
