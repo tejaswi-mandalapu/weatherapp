@@ -42,18 +42,113 @@
         }
 
         .weather-card {
-            max-width: 500px;
+            max-width: 800px;
             margin: 0 auto;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border: none;
         }
 
-        /* Keep all your existing styles and add these new ones */
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .forecast-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .news-section {
+            padding: 3rem 0;
+        }
+
+        .news-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .news-img {
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .badge-weather {
+            background-color: var(--primary-blue);
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .forecast-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(255,255,255,0.8);
+        }
+
+        .forecast-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .location-btn {
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .weather-card {
+                max-width: 100%;
+            }
+            .news-img {
+                height: 150px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Toast for messages -->
+    {% if messages %}
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+      <div class="toast-container position-fixed top-3 end-0 p-3" style="z-index: 1080; margin-top: 20px;">
+        {% for message in messages %}
+        <div class="toast align-items-center text-bg-{{ message.tags|default:'success' }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
         <div class="container">
@@ -66,10 +161,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Blogs</a>
+                        <a class="nav-link" href="#">My cities</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My cities</a>
+                        <a class="nav-link" href="#">Blogs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
@@ -80,60 +175,58 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'donate' %}">Donate</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'userdashboard' %}">Dashboard</a>
-                    </li>
-
-                    <div class="dropdown">
-                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {{ user.first_name|default:user.username }}
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="#">My Profile</a></li>
                             <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                         </ul>
-                    </div>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">Register</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
-            </ul>
-        </div>
         </div>
     </nav>
 
-    <!-- User Welcome Section -->
-    <section class="container mt-4">
-        <div class="user-welcome">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2>Welcome back, {{ user.username }}!</h2>
-                    <p class="lead">Check today's weather and latest news updates</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <span class="badge bg-primary">
-                        <i class="bi bi-person-circle me-1"></i> Premium Member
-                    </span>
-                </div>
-            </div>
+    <!-- Welcome message below navbar -->
+    <div class="container mt-4">
+        <div class="welcome-message">
+            <i class="bi bi-brightness-high-fill welcome-icon"></i>
+            <h2>Hello, {{ user.first_name|default:"there" }} {{user.last_name}}! <span class="wave">👋</span></h2>
+            <p class="mb-0">Here's your local weather forecast. Stay prepared for what's coming!</p>
         </div>
-    </section>
+    </div>
 
     <!-- Weather Search Section -->
     <section class="search-container">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-6">
+                <div class="col-lg-8">
                     <div class="card weather-card">
                         <div class="card-body p-4">
-                            <h2 class="text-center mb-4">Weather Search</h2>
-                            <form method="POST" action="{% url 'userdashboard' %}" class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-0">Weather Forecast</h2>
+                                <button id="getLocationBtn" class="btn btn-outline-primary">
+                                    <i class="bi bi-geo-alt-fill me-1"></i> Use My Location
+                                </button>
+                            </div>
+                            
+                            <form id="citySearchForm" class="mb-4">
                                 {% csrf_token %}
                                 <div class="input-group">
-                                    <input type="text" name="city" class="form-control form-control-lg"
+                                    <input type="text" name="city" id="cityInput" class="form-control form-control-lg" 
                                         placeholder="Enter city name (e.g. London, Tokyo)" required>
                                     <button class="btn btn-primary btn-lg" type="submit">
                                         <i class="bi bi-search"></i> Search
@@ -141,53 +234,89 @@
                                 </div>
                             </form>
 
-                            <!-- Display Messages -->
-                            {% if messages %}
-                            {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} mt-3">
-                                {{ message }}
-                            </div>
-                            {% endfor %}
-                            {% endif %}
-
-                            <!-- Weather Results -->
-                            {% if weather_data %}
-                            {% if weather_data.error %}
-                            <div class="alert alert-danger mt-3">{{ weather_data.error }}</div>
-                            {% else %}
-                            <div class="weather-result text-center">
-                                <h3 class="mb-3">{{ weather_data.city }}</h3>
-                                <img src="{{ weather_data.icon }}" alt="Weather icon" class="weather-icon mb-3">
-                                <div class="display-2 mb-2">{{ weather_data.temperature }}°C</div>
-                                <p class="h4 mb-3">{{ weather_data.description }}</p>
-
-                                <div class="row mt-4">
-                                    <div class="col-6">
-                                        <div class="p-3 bg-light rounded">
-                                            <i class="bi bi-droplet-fill text-primary"></i>
-                                            <span class="ms-2">Humidity</span>
-                                            <div class="h5 mt-2">{{ weather_data.humidity }}%</div>
+                            <!-- Current Weather Results -->
+                            <div id="weatherResults">
+                                <div class="text-center py-4" id="locationLoading" style="display:none;">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <p class="mt-3">Detecting your location and fetching weather...</p>
+                                </div>
+                                {% if weather_data %}
+                                    {% if weather_data.error %}
+                                    <div class="alert alert-danger mt-3">{{ weather_data.error }}</div>
+                                    {% else %}
+                                    <div class="current-weather">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-6 text-center text-md-start">
+                                                <h3 class="mb-3">{{ weather_data.city }}</h3>
+                                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                                    <img src="{{ weather_data.icon }}" alt="Weather icon" class="weather-icon me-3">
+                                                    <div>
+                                                        <div class="display-2 mb-0">{{ weather_data.temperature }}°C</div>
+                                                        <p class="h4 mb-3">{{ weather_data.description }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="row mt-3 mt-md-0">
+                                                    <div class="col-6 mb-3">
+                                                        <div class="p-3 bg-light rounded">
+                                                            <i class="bi bi-droplet-fill text-primary"></i>
+                                                            <span class="ms-2">Humidity</span>
+                                                            <div class="h5 mt-2">{{ weather_data.humidity }}%</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 mb-3">
+                                                        <div class="p-3 bg-light rounded">
+                                                            <i class="bi bi-wind text-primary"></i>
+                                                            <span class="ms-2">Wind</span>
+                                                            <div class="h5 mt-2">{{ weather_data.wind_speed }} km/h</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="p-3 bg-light rounded">
+                                                            <i class="bi bi-thermometer-half text-primary"></i>
+                                                            <span class="ms-2">Feels Like</span>
+                                                            <div class="h5 mt-2">{{ weather_data.feels_like }}°C</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="p-3 bg-light rounded">
+                                                            <i class="bi bi-eye-fill text-primary"></i>
+                                                            <span class="ms-2">Visibility</span>
+                                                            <div class="h5 mt-2">{{ weather_data.visibility }} km</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 5-Day Forecast -->
+                                        <h4 class="mt-5 mb-3">5-Day Forecast</h4>
+                                        <div class="row g-3">
+                                            {% for day in weather_data.forecast %}
+                                            <div class="col">
+                                                <div class="forecast-card">
+                                                    <div class="fw-bold mb-2">{{ day.date }}</div>
+                                                    <img src="{{ day.icon }}" alt="Weather icon" class="forecast-icon mb-2">
+                                                    <div class="h5">{{ day.temp }}°C</div>
+                                                    <div class="small text-muted">{{ day.description }}</div>
+                                                    <div class="small mt-2">
+                                                        <span class="text-primary">{{ day.temp_min }}°</span> / 
+                                                        <span class="text-danger">{{ day.temp_max }}°</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="p-3 bg-light rounded">
-                                            <i class="bi bi-wind text-primary"></i>
-                                            <span class="ms-2">Wind</span>
-                                            <div class="h5 mt-2">{{ weather_data.wind_speed }} km/h</div>
-                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <i class="bi bi-cloud-sun text-muted" style="font-size: 3rem;"></i>
+                                        <p class="mt-3">Search for a city or use your current location to see weather information</p>
                                     </div>
-                                </div>
-                                <div class="mt-3 text-muted">
-                                    Feels like {{ weather_data.feels_like }}°C
-                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                            {% else %}
-                            <div class="text-center py-4">
-                                <i class="bi bi-cloud-sun text-muted" style="font-size: 3rem;"></i>
-                                <p class="mt-3">Search for a city to see weather information</p>
-                            </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -259,21 +388,228 @@
 
     <!-- Custom JS -->
     <script>
-        // Simple animation for weather cards
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate news cards
             const cards = document.querySelectorAll('.news-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
                 card.style.transition = 'all 0.5s ease ' + (index * 0.1) + 's';
-
                 setTimeout(() => {
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
                 }, 100);
             });
 
-            // Add any dashboard-specific JS here
+            // Initialize all toasts with autohide after 5 seconds
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl).show();
+            });
+
+            // Get user's current location
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            const cityInput = document.getElementById('cityInput');
+            
+            getLocationBtn.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    getLocationBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Detecting...';
+                    getLocationBtn.disabled = true;
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            // Success callback
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+                            
+                            // Call your backend API to get weather by coordinates
+                            fetchWeatherByCoords(latitude, longitude);
+                        },
+                        function(error) {
+                            // Error callback
+                            getLocationBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Use My Location';
+                            getLocationBtn.disabled = false;
+                            
+                            let errorMessage = "Unable to retrieve your location";
+                            if (error.code === error.PERMISSION_DENIED) {
+                                errorMessage = "Location access was denied. Please enable location services.";
+                            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                                errorMessage = "Location information is unavailable.";
+                            } else if (error.code === error.TIMEOUT) {
+                                errorMessage = "The request to get location timed out.";
+                            }
+                            
+                            showToast(errorMessage, 'danger');
+                        }
+                    );
+                } else {
+                    showToast("Geolocation is not supported by your browser", 'danger');
+                }
+            });
+
+            document.getElementById('citySearchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const cityInput = document.getElementById('cityInput');
+                const city = cityInput.value.trim();
+                if (!city) return;
+                fetch(`/api/weather-by-city?city=${encodeURIComponent(city)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) throw new Error(data.error);
+                        updateWeatherDisplay(data);
+                    })
+                    .catch(error => showToast(error.message, 'danger'));
+            });
+
+            function fetchWeatherByCoords(lat, lon) {
+                fetch(`/api/weather-by-coords?lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.error) throw new Error(data.error);
+                        updateWeatherDisplay(data);
+                        // Reset the button after successful fetch
+                        getLocationBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Use My Location';
+                        getLocationBtn.disabled = false;
+                    })
+                    .catch(error => {
+                        showToast(error.message, 'danger');
+                        // Also reset the button on error
+                        getLocationBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i> Use My Location';
+                        getLocationBtn.disabled = false;
+                    });
+            }
+
+            function updateWeatherDisplay(data) {
+                const weatherResults = document.getElementById('weatherResults');
+                const locationLoading = document.getElementById('locationLoading');
+                if (locationLoading) locationLoading.style.display = 'none';
+                
+                // Create the current weather HTML
+                let currentWeatherHTML = `
+                    <div class="current-weather">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-center text-md-start">
+                                <h3 class="mb-3">${data.city}</h3>
+                                <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                    <img src="${data.icon}" alt="Weather icon" class="weather-icon me-3">
+                                    <div>
+                                        <div class="display-2 mb-0">${data.temperature}°C</div>
+                                        <p class="h4 mb-3">${data.description}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mt-3 mt-md-0">
+                                    <div class="col-6 mb-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <i class="bi bi-droplet-fill text-primary"></i>
+                                            <span class="ms-2">Humidity</span>
+                                            <div class="h5 mt-2">${data.humidity}%</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <i class="bi bi-wind text-primary"></i>
+                                            <span class="ms-2">Wind</span>
+                                            <div class="h5 mt-2">${data.wind_speed} km/h</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded">
+                                            <i class="bi bi-thermometer-half text-primary"></i>
+                                            <span class="ms-2">Feels Like</span>
+                                            <div class="h5 mt-2">${data.feels_like}°C</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 bg-light rounded">
+                                            <i class="bi bi-eye-fill text-primary"></i>
+                                            <span class="ms-2">Visibility</span>
+                                            <div class="h5 mt-2">${data.visibility} km</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `;
+                
+                // Add 5-day forecast if available
+                if (data.forecast && data.forecast.length > 0) {
+                    currentWeatherHTML += `
+                        <h4 class="mt-5 mb-3">5-Day Forecast</h4>
+                        <div class="row g-3">
+                    `;
+                    
+                    data.forecast.forEach(day => {
+                        currentWeatherHTML += `
+                            <div class="col">
+                                <div class="forecast-card">
+                                    <div class="fw-bold mb-2">${day.date}</div>
+                                    <img src="${day.icon}" alt="Weather icon" class="forecast-icon mb-2">
+                                    <div class="h5">${day.temp}°C</div>
+                                    <div class="small text-muted">${day.description}</div>
+                                    <div class="small mt-2">
+                                        <span class="text-primary">${day.temp_min}°</span> / 
+                                        <span class="text-danger">${day.temp_max}°</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    currentWeatherHTML += `</div>`;
+                }
+                
+                currentWeatherHTML += `</div>`;
+                weatherResults.innerHTML = currentWeatherHTML;
+            }
+
+            function showToast(message, type = 'success') {
+                const toastContainer = document.querySelector('.toast-container');
+                
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+                toastEl.setAttribute('role', 'alert');
+                toastEl.setAttribute('aria-live', 'assertive');
+                toastEl.setAttribute('aria-atomic', 'true');
+                toastEl.setAttribute('data-bs-autohide', 'true');
+                toastEl.setAttribute('data-bs-delay', '5000');
+                
+                toastEl.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                
+                toastContainer.appendChild(toastEl);
+                new bootstrap.Toast(toastEl).show();
+            }
+
+            // Always show loading spinner on initial load
+            const weatherResults = document.getElementById('weatherResults');
+            const locationLoading = document.getElementById('locationLoading');
+            if (locationLoading) locationLoading.style.display = 'block';
+
+            // Only fetch if geolocation is available and no weather is shown
+            const hasWeather = weatherResults && weatherResults.querySelector('.current-weather');
+            if (!hasWeather && "geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        fetchWeatherByCoords(latitude, longitude);
+                    },
+                    function(error) {
+                        if (locationLoading) locationLoading.style.display = 'none';
+                        showToast("Unable to retrieve your location.", 'danger');
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            }
         });
     </script>
 </body>

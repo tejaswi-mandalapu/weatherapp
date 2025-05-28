@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Le Temps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --dark: #121212;
+            --darker: #1a1a1a;
+            --grey: #2d2d2d;
+            --light: #e0e0e0;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .profile-card {
+            background-color: var(--darker);
+            border: 1px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .profile-card-header {
+            background-color: var(--grey);
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 1px solid #444;
+            position: relative;
+        }
+        .profile-card-body {
+            padding: 1.5rem;
+        }
+        .form-control {
+            background-color: var(--grey);
+            border: 1px solid #444;
+            color: var(--light);
+            padding: 10px;
+        }
+        .form-control:focus {
+            background-color: #3a3a3a;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            color: white;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            padding: 10px;
+            font-weight: 500;
+        }
+        .profile-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #444;
+        }
+        .profile-section:last-child {
+            border-bottom: none;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--grey);
+            background-color: var(--dark);
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+        }
+        .nav-pills .nav-link {
+            color: var(--light);
+        }
+        .account-settings {
+            display: flex;
+            gap: 2rem;
+        }
+        .settings-nav {
+            flex: 0 0 200px;
+        }
+        .settings-content {
+            flex: 1;
+        }
+        @media (max-width: 768px) {
+            .account-settings {
+                flex-direction: column;
+            }
+            .settings-nav {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container profile-container">
+        <!-- Logo -->
+        <div class="text-center mb-4">
+            <a href="{% url 'index' %}" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-cloud-sun fs-3 me-2" style="color: #dee2e7;"></i>
+                <span class="fs-3 fw-bold text-white" style="font-family: 'Times New Roman', serif;">Le Temps</span>
+            </a>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <div class="d-flex align-items-center">
+                    <img src="https://via.placeholder.com/120" alt="Profile" class="profile-avatar me-4">
+                    <div>
+                        <h3 class="mb-1">Alex Johnson</h3>
+                        <p class="text-muted mb-2">Premium Member since June 2020</p>
+                        <span class="badge bg-primary">Verified</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-card-body">
+                <div class="account-settings">
+                    <!-- Settings Navigation -->
+                    <div class="settings-nav">
+                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <button class="nav-link active" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                            <button class="nav-link" id="v-pills-account-tab" data-bs-toggle="pill" data-bs-target="#v-pills-account" type="button" role="tab">
+                                <i class="bi bi-gear me-2"></i>Account
+                            </button>
+                            <button class="nav-link" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab">
+                                <i class="bi bi-shield-lock me-2"></i>Security
+                            </button>
+                            <button class="nav-link" id="v-pills-notifications-tab" data-bs-toggle="pill" data-bs-target="#v-pills-notifications" type="button" role="tab">
+                                <i class="bi bi-bell me-2"></i>Notifications
+                            </button>
+                            <button class="nav-link" id="v-pills-privacy-tab" data-bs-toggle="pill" data-bs-target="#v-pills-privacy" type="button" role="tab">
+                                <i class="bi bi-lock me-2"></i>Privacy
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Content -->
+                    <div class="settings-content tab-content" id="v-pills-tabContent">
+                        <!-- Profile Tab -->
+                        <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel">
+                            <h4 class="mb-4"><i class="bi bi-person me-2"></i>Profile Information</h4>
+                            
+                            <form>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="firstName" value="Alex">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="lastName" value="Johnson">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" value="alex.johnson@example.com">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">Bio</label>
+                                    <textarea class="form-control" id="bio" rows="3">Weather enthusiast and storm chaser. Love tracking extreme weather patterns.</textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="avatar" class="form-label">Profile Picture</label>
+                                    <input class="form-control" type="file" id="avatar">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Account Tab -->
+                        <div class="tab-pane fade" id="v-pills-account" role="tabpanel">
+                            <h4 class="mb-4"><i class="bi bi-gear me-2"></i>Account Settings</h4>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-globe me-2"></i>Language & Region</h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Language</label>
+                                        <select class="form-select">
+                                            <option selected>English</option>
+                                            <option>French</option>
+                                            <option>Spanish</option>
+                                            <option>German</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Time Zone</label>
+                                        <select class="form-select">
+                                            <option selected>(UTC-05:00) Eastern Time</option>
+                                            <option>(UTC-06:00) Central Time</option>
+                                            <option>(UTC-07:00) Mountain Time</option>
+                                            <option>(UTC-08:00) Pacific Time</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-credit-card me-2"></i>Subscription</h5>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <h6 class="mb-1">Premium Plan</h6>
+                                        <p class="text-muted mb-0">Renews on June 15, 2024</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Manage Subscription</button>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5 class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h5>
+                                <div class="mt-3">
+                                    <button class="btn btn-outline-danger me-2">Deactivate Account</button>
+                                    <button class="btn btn-danger">Delete Account</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Tab -->
+                        <div class="tab-pane fade" id="v-pills-security" role="tabpanel">
+                            <h4 class="mb-4"><i class="bi bi-shield-lock me-2"></i>Security Settings</h4>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-key me-2"></i>Change Password</h5>
+                                <form class="mt-3">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="currentPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="newPassword">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-lock me-1"></i> Update Password
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-phone me-2"></i>Two-Factor Authentication</h5>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <h6 class="mb-1">Status: <span class="text-success">Active</span></h6>
+                                        <p class="text-muted mb-0">Authenticator app + SMS backup</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary">Manage 2FA</button>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-device-ssd me-2"></i>Active Sessions</h5>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-dark rounded">
+                                        <div>
+                                            <h6 class="mb-1">Chrome on Windows</h6>
+                                            <p class="text-muted mb-0">New York, NY • Active now</p>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger">Log out</button>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center p-2 bg-dark rounded">
+                                        <div>
+                                            <h6 class="mb-1">Safari on iPhone</h6>
+                                            <p class="text-muted mb-0">Last active 2 days ago</p>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger">Log out</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notifications Tab -->
+                        <div class="tab-pane fade" id="v-pills-notifications" role="tabpanel">
+                            <h4 class="mb-4"><i class="bi bi-bell me-2"></i>Notification Preferences</h4>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-envelope me-2"></i>Email Notifications</h5>
+                                <div class="form-check form-switch mt-3">
+                                    <input class="form-check-input" type="checkbox" id="weatherAlerts" checked>
+                                    <label class="form-check-label" for="weatherAlerts">Severe weather alerts</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="newsletter" checked>
+                                    <label class="form-check-label" for="newsletter">Weekly newsletter</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="productUpdates">
+                                    <label class="form-check-label" for="productUpdates">Product updates</label>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-phone me-2"></i>Push Notifications</h5>
+                                <div class="form-check form-switch mt-3">
+                                    <input class="form-check-input" type="checkbox" id="pushAlerts" checked>
+                                    <label class="form-check-label" for="pushAlerts">Immediate weather alerts</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="dailyForecast" checked>
+                                    <label class="form-check-label" for="dailyForecast">Daily forecast</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary mt-2">
+                                <i class="bi bi-save me-1"></i> Save Preferences
+                            </button>
+                        </div>
+                        
+                        <!-- Privacy Tab -->
+                        <div class="tab-pane fade" id="v-pills-privacy" role="tabpanel">
+                            <h4 class="mb-4"><i class="bi bi-lock me-2"></i>Privacy Settings</h4>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-eye me-2"></i>Profile Visibility</h5>
+                                <div class="mt-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="visibility" id="public" checked>
+                                        <label class="form-check-label" for="public">
+                                            Public - Anyone can see my profile
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="visibility" id="private">
+                                        <label class="form-check-label" for="private">
+                                            Private - Only I can see my profile
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-data-usage me-2"></i>Data Sharing</h5>
+                                <div class="form-check form-switch mt-3">
+                                    <input class="form-check-input" type="checkbox" id="shareData">
+                                    <label class="form-check-label" for="shareData">
+                                        Allow anonymous data sharing to improve weather models
+                                    </label>
+                                </div>
+                                <p class="text-muted small mt-1">
+                                    This helps us provide more accurate forecasts for everyone.
+                                </p>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h5><i class="bi bi-download me-2"></i>Data Export</h5>
+                                <p class="text-muted">
+                                    Download all your personal data stored in our systems.
+                                </p>
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-download me-1"></i> Request Data Export
+                                </button>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary mt-2">
+                                <i class="bi bi-save me-1"></i> Save Privacy Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
