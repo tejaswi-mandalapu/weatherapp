@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from weather import views as weather_views
 from weather.views import user_login,index
+from weather.views import CustomPasswordChangeView
 
 
 urlpatterns = [
@@ -31,6 +32,7 @@ urlpatterns = [
     path('dashboard/', weather_views.userdashboard, name='userdashboard'),
     path('api/weather-by-coords', weather_views.weather_by_coords, name='weather_by_coords'),
     path('api/weather-by-city', weather_views.weather_by_city, name='weather_by_city'),
+    path('my-profile/', weather_views.my_profile, name='my_profile'),
     
     
     
@@ -56,4 +58,6 @@ urlpatterns = [
     
     # Main App URLs
     path('', include('weather.urls')),
+    
+    path('password_change/', CustomPasswordChangeView.as_view(), name='password_change'),
 ]
