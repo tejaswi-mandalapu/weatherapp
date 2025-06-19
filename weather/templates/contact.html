@@ -73,10 +73,17 @@
     <div class="auth-container">
         <!-- Logo -->
         <div class="text-center mb-4">
-            <a href="{% url 'index' %}" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
-                <i class="bi bi-cloud-sun fs-3 me-2" style="color: #dee2e7;"></i>
-                <span class="fs-3 fw-bold text-white" style="font-family: 'Times New Roman', serif;">Le Temps</span>
-            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'userdashboard' %}" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-cloud-sun fs-3 me-2" style="color: #dee2e7;"></i>
+                    <span class="fs-3 fw-bold text-white" style="font-family: 'Times New Roman', serif;">Le Temps</span>
+                </a>
+            {% else %}
+                <a href="{% url 'index' %}" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-cloud-sun fs-3 me-2" style="color: #dee2e7;"></i>
+                    <span class="fs-3 fw-bold text-white" style="font-family: 'Times New Roman', serif;">Le Temps</span>
+                </a>
+            {% endif %}
         </div>
 
         <!-- Contact Card -->

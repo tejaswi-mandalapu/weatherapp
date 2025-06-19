@@ -116,6 +116,11 @@ AUTHENTICATION_BACKENDS = [
 NEWS_API_KEY = '2125ea91cf0b41c5adffccb77e1332f6'
 WEATHER_API_KEY = '69868f570f364fd0b34184222251805'  
 
+# Session expires after 30 minutes (1800 seconds) of inactivity
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_COOKIE_AGE = 1800  # 30 minutes in seconds
+SESSION_SAVE_EVERY_REQUEST = True  # Reset timer on each request
+
 AUTH_USER_MODEL = 'weather.CustomUser'
 
 CACHES = {
@@ -124,6 +129,7 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+
 
 
 # Internationalization
