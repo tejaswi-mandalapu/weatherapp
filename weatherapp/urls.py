@@ -27,7 +27,7 @@ urlpatterns = [
     
     
     
-
+            
     # Accounts URLs (for other auth features)
     path('accounts/', include([
         path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
